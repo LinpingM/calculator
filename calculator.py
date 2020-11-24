@@ -12,57 +12,41 @@ BUTTONS = (
            ('7', '8', '9', '×'),
            ('4', '5', '6', '-'),
            ('1', '2', '3', '+'),
-           ('=', '0', ',', '÷'),
+           ('=', '0', '.', '÷'),
 )
 
-ans = 0
-entry = '0'
 
-# not finished
+def instantOperations(text):
+    labelValue = label.cget('text')
+    if labelValue == '':
+        labelValue = '0'
+    if text == '%':
+        labelValue = float(labelValue) / 100
+    elif text == '√' and float(labelValue) >= 0:
+        labelValue = float(labelValue) ** 0.5
+    elif text == 'x²':
+        labelValue = float(labelValue) ** 2
+    elif text == '¹/x' and float(labelValue) != 0:
+        labelValue = 1 / float(labelValue)
+    elif text == 'сᴇ' or text == 'с':
+        labelValue = 0
+    elif text == '<':
+        labelValue = labelValue[:-1]
+    elif text == '±':
+        labelValue = -float(labelValue)
+    label['text'] = str(labelValue)
 
-def instantOperations(str):
-    pass
-    '''
-    global ans
-    global entry
-    if str == '%':
-        ans /= 100
-        print(ans)
-    elif str == '√':
-        ans **= 0.5
-        print(ans)
-    elif str == 'x²':
-        ans **= 2
-        print(ans)
-    elif str == '¹/x' and ans != 0:
-        ans = 1 / ans
-        print(ans)
-    elif str == 'сᴇ':
-        ans = 0
-        print(ans)
-    elif str == 'с':
-        ans = 0
-        print(ans)
-    elif str == '<':
-        ans = ans[:-1]
-        print(ans)
-    elif str == '±':
-        ans *= -1
-        print(ans)
-    print(str)
-'''
-def numbers(str):
-    if str.isdigit():
+def numbers(text):
+    if text.isdigit():
         if label.cget('text') == '0':
-            label['text'] = str
+            label['text'] = text
         else:
-            label['text'] = label.cget("text") + str
-    elif str == ',' and label.cget('text').count(',') == 0:
-        label['text'] = label.cget("text") + str
+            label['text'] = label.cget("text") + text
+    elif text == '.' and label.cget('text').count('.') == 0:
+        label['text'] = label.cget("text") + text
 
-
-def operation(str):
-    print(str)
+def operation(text):
+    print(text)
 
 
 root = Tk()
@@ -84,7 +68,7 @@ root.y = int(screenH/2 - root.height/2)
 root.geometry(f'{root.width}x{root.height}+{root.x}+{root.y}')
 
 
-label = Label(text=entry, font='Arial 28', bg=BGROOT, height=3)
+label = Label(text='0', font='Arial 28', bg=BGROOT, height=3)
 label.grid(row=0, column=0, columnspan=4, sticky=E, padx=8)
 
 for row in range(2):
@@ -95,7 +79,7 @@ for row in range(2):
             bd=0, bg=BGOPER,
             width=5,
             activebackground=ACTIVEBG,
-            command=lambda str = BUTTONS[row][column]: instantOperations(str)).grid(
+            command=lambda text = BUTTONS[row][column]: instantOperations(text)).grid(
                                                                                     row=row + 1,
                                                                                     column=column,
                                                                                     padx=2,
@@ -111,7 +95,7 @@ for row in range(2, 6):
             bg=BGNUM,
             width=5,
             activebackground=ACTIVEBG,
-            command=lambda str = BUTTONS[row][column]: numbers(str)).grid(
+            command=lambda text = BUTTONS[row][column]: numbers(text)).grid(
                                                                           row=row + 1,
                                                                           column=column,
                                                                           padx=2,
@@ -126,7 +110,7 @@ for row in range(2, 6):
         bg=BGOPER,
         width=5,
         activebackground=ACTIVEBG,
-        command=lambda str = BUTTONS[row][3]: operation(str)).grid(
+        command=lambda text = BUTTONS[row][3]: operation(text)).grid(
                                                                    row=row + 1,
                                                                    column=3,
                                                                    padx=2,
