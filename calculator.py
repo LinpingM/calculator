@@ -28,18 +28,21 @@ def is_digit(string):
 def instantOperations(text):
     labelValue = label.cget('text')
     if is_digit(labelValue):
-        if text == '%':
-            labelValue = float(labelValue) / 100
-        elif text == '√' and float(labelValue) >= 0:
-            labelValue = float(labelValue) ** 0.5
-        elif text == 'x²':
-            labelValue = float(labelValue) ** 2
-        elif text == '¹/x' and float(labelValue) != 0:
-            labelValue = 1 / float(labelValue)
-        elif text == 'сᴇ' or text == 'с':
-            labelValue = 0
-        elif text == '±':
-            labelValue = -float(labelValue)
+        try:
+            if text == '%':
+                labelValue = float(labelValue) / 100
+            elif text == '√' and float(labelValue) >= 0:
+                labelValue = float(labelValue) ** 0.5
+            elif text == 'x²':
+                labelValue = float(labelValue) ** 2
+            elif text == '¹/x' and float(labelValue) != 0:
+                labelValue = 1 / float(labelValue)
+            elif text == 'сᴇ' or text == 'с':
+                labelValue = 0
+            elif text == '±':
+                labelValue = -float(labelValue)
+        except OverflowError:
+            labelValue = 'inf'
     if text == '<':
         labelValue = labelValue[:-1]
     label['text'] = str(labelValue)
@@ -73,7 +76,8 @@ screenH = root.winfo_screenheight()
 # root's coordinates
 root.x = int(screenW/2 - root.width/2)
 root.y = int(screenH/2 - root.height/2)
-#root.geometry(f'{root.width}x{root.height}+{root.x}+{root.y}')
+
+# root.geometry(f'{root.width}x{root.height}+{root.x}+{root.y}')
 root.geometry(f'+{root.x}+{root.y}')
 
 
