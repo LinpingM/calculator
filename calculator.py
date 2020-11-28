@@ -16,6 +16,10 @@ BUTTONS = (
 )
 
 
+operOn = False
+ans = 0
+
+
 def is_digit(string):
     if string.isdigit():
        return True
@@ -26,6 +30,7 @@ def is_digit(string):
         return False
 
 def instantOperations(text):
+    global operOn
     labelValue = label.cget('text')
     if is_digit(labelValue):
         try:
@@ -38,6 +43,7 @@ def instantOperations(text):
             elif text == '¹/x' and float(labelValue) != 0:
                 labelValue = 1 / float(labelValue)
             elif text == 'сᴇ' or text == 'с':
+                operOn = False
                 labelValue = 0
             elif text == '±':
                 labelValue = -float(labelValue)
@@ -55,9 +61,29 @@ def numbers(text):
             label['text'] = label.cget("text") + text
     elif text == '.' and label.cget('text').count('.') == 0:
         label['text'] = label.cget("text") + text
+    elif text == '=':
+        operations(text)
 
-def operation(text):
-    print(text)
+def operations(text):
+    global ans
+    global operOn
+    global lastOper
+    global firstNum
+    if not operOn:
+        lastOper = text
+        firstNum = label.cget('text')
+        label['text'] = ''
+        operOn = True
+    else:
+        if lastOper == '+':
+            label['text'] = str(float(firstNum) + float(label.cget('text')))
+        elif lastOper == '-':
+            label['text'] = str(float(firstNum) - float(label.cget('text')))
+        elif lastOper == '×':
+            label['text'] = str(float(firstNum) * float(label.cget('text')))
+        elif lastOper == '÷' and label.cget('text') != '0':
+            label['text'] = str(float(firstNum) / float(label.cget('text')))
+        operOn = False
 
 
 root = Tk()
@@ -123,7 +149,7 @@ for row in range(2, 6):
         bg=BGOPER,
         width=5,
         activebackground=ACTIVEBG,
-        command=lambda text = BUTTONS[row][3]: operation(text)).grid(
+        command=lambda text = BUTTONS[row][3]: operations(text)).grid(
                                                                    row=row + 1,
                                                                    column=3,
                                                                    padx=2,
