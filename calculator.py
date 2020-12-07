@@ -16,8 +16,9 @@ BUTTONS = (
 )
 
 
-operOn = False
 ans = 0
+lastOper = '='
+oper = False
 
 
 def is_digit(string):
@@ -30,7 +31,7 @@ def is_digit(string):
         return False
 
 def instantOperations(text):
-    global operOn
+    global oper
     labelValue = label.cget('text')
     if is_digit(labelValue):
         try:
@@ -43,7 +44,7 @@ def instantOperations(text):
             elif text == '¹/x' and float(labelValue) != 0:
                 labelValue = 1 / float(labelValue)
             elif text == 'сᴇ' or text == 'с':
-                operOn = False
+                oper = False
                 labelValue = 0
             elif text == '±':
                 labelValue = -float(labelValue)
@@ -64,26 +65,36 @@ def numbers(text):
     elif text == '=':
         operations(text)
 
+
 def operations(text):
     global ans
-    global operOn
     global lastOper
-    global firstNum
-    if not operOn:
-        lastOper = text
-        firstNum = label.cget('text')
-        label['text'] = ''
-        operOn = True
-    else:
-        if lastOper == '+':
-            label['text'] = str(float(firstNum) + float(label.cget('text')))
+    global oper
+    if text == '=':
+        if lastOper == '=':
+            ans = float(label.cget("text"))
+        elif lastOper == '+':
+            ans += float(label.cget("text"))
         elif lastOper == '-':
-            label['text'] = str(float(firstNum) - float(label.cget('text')))
+            ans -= float(label.cget("text"))
         elif lastOper == '×':
-            label['text'] = str(float(firstNum) * float(label.cget('text')))
-        elif lastOper == '÷' and label.cget('text') != '0':
-            label['text'] = str(float(firstNum) / float(label.cget('text')))
-        operOn = False
+            ans *= float(label.cget("text"))
+        elif lastOper == '÷':
+            ans /= float(label.cget("text"))
+        label['text'] = str(ans)
+    else:
+        if lastOper == '=':
+            ans = float(label.cget("text"))
+        elif lastOper == '+':
+            ans += float(label.cget("text"))
+        elif lastOper == '-':
+            ans -= float(label.cget("text"))
+        elif lastOper == '×':
+            ans *= float(label.cget("text"))
+        elif lastOper == '÷':
+            ans /= float(label.cget("text"))
+        label['text'] = ''
+    lastOper = text
 
 
 root = Tk()
