@@ -5,10 +5,10 @@ ACTIVEBG = '#c5c5c5'
 BGROOT = '#e1e1e1'
 BGNUM = '#fafafa'
 BGOPER = '#f0f0f0'
-FONT = 'Arial 19'
+FONT = 'Verdana 17'
 BUTTONS = (
            ('%', '√', 'x²', '¹/x'),
-           ('сᴇ', 'с', '<', '±'),
+           ('сᴇ', 'с', '⌫', '±'),
            ('7', '8', '9', '×'),
            ('4', '5', '6', '-'),
            ('1', '2', '3', '+'),
@@ -18,8 +18,14 @@ BUTTONS = (
 
 ans = 0
 lastOper = '='
-oper = False
 
+
+def default():
+    global ans
+    global lastOper
+    ans = 0
+    lastOper = '='
+    return 0
 
 def is_digit(string):
     if string.isdigit():
@@ -30,28 +36,46 @@ def is_digit(string):
     except ValueError:
         return False
 
-def instantOperations(text):
-    global oper
-    labelValue = label.cget('text')
-    if is_digit(labelValue):
+def calc(lastOper, labelValue):
+    global ans
+    if lastOper == '=':
+        ans = labelValue
+    elif lastOper == '+':
+        ans += labelValue
+    elif lastOper == '-':
+         ans -= labelValue
+    elif lastOper == '×':
+         ans *= labelValue
+    elif lastOper == '÷':
         try:
-            if text == '%':
-                labelValue = float(labelValue) / 100
-            elif text == '√' and float(labelValue) >= 0:
-                labelValue = float(labelValue) ** 0.5
-            elif text == 'x²':
-                labelValue = float(labelValue) ** 2
-            elif text == '¹/x' and float(labelValue) != 0:
-                labelValue = 1 / float(labelValue)
-            elif text == 'сᴇ' or text == 'с':
-                oper = False
-                labelValue = 0
-            elif text == '±':
-                labelValue = -float(labelValue)
-        except OverflowError:
-            labelValue = 'inf'
-    if text == '<':
+            ans /= labelValue
+        except ZeroDivisionError:
+            ans = 0
+
+def instantOperations(text):
+    labelValue = label.cget('text')
+    if text == '⌫':
         labelValue = labelValue[:-1]
+    else:
+        if is_digit(labelValue):
+            labelValue = float(labelValue)
+            try:
+                if text == '%':
+                    labelValue = labelValue / 100
+                elif text == '√':
+                    if labelValue >= 0:
+                        labelValue = labelValue ** 0.5
+                elif text == 'x²':
+                    labelValue = labelValue ** 2
+                elif text == '¹/x':
+                    if labelValue != 0:
+                        labelValue = 1 / labelValue
+                elif text == 'сᴇ' or text == 'с':
+                    labelValue = default()
+                elif text == '±':
+                    labelValue = -labelValue
+            except OverflowError:
+                labelValue = 'inf'
     label['text'] = str(labelValue)
 
 def numbers(text):
@@ -69,30 +93,14 @@ def numbers(text):
 def operations(text):
     global ans
     global lastOper
-    global oper
+    try:
+        labelValue = float(label.cget("text"))
+    except ValueError:
+        labelValue = 0
+    calc(lastOper, labelValue)
     if text == '=':
-        if lastOper == '=':
-            ans = float(label.cget("text"))
-        elif lastOper == '+':
-            ans += float(label.cget("text"))
-        elif lastOper == '-':
-            ans -= float(label.cget("text"))
-        elif lastOper == '×':
-            ans *= float(label.cget("text"))
-        elif lastOper == '÷':
-            ans /= float(label.cget("text"))
         label['text'] = str(ans)
     else:
-        if lastOper == '=':
-            ans = float(label.cget("text"))
-        elif lastOper == '+':
-            ans += float(label.cget("text"))
-        elif lastOper == '-':
-            ans -= float(label.cget("text"))
-        elif lastOper == '×':
-            ans *= float(label.cget("text"))
-        elif lastOper == '÷':
-            ans /= float(label.cget("text"))
         label['text'] = ''
     lastOper = text
 
@@ -114,11 +122,10 @@ screenH = root.winfo_screenheight()
 root.x = int(screenW/2 - root.width/2)
 root.y = int(screenH/2 - root.height/2)
 
-# root.geometry(f'{root.width}x{root.height}+{root.x}+{root.y}')
 root.geometry(f'+{root.x}+{root.y}')
 
 
-label = Label(text='0', font='Arial 28', bg=BGROOT, height=3)
+label = Label(text='0', font='Verdana 25', bg=BGROOT, height=3)
 label.grid(row=0, column=0, columnspan=4, sticky=E, padx=8)
 
 for row in range(2):
@@ -126,7 +133,8 @@ for row in range(2):
         Button(
             text=BUTTONS[row][column],
             font=FONT,
-            bd=0, bg=BGOPER,
+            bd=0,
+            bg=BGOPER,
             width=5,
             activebackground=ACTIVEBG,
             command=lambda text = BUTTONS[row][column]: instantOperations(text)).grid(
@@ -134,7 +142,7 @@ for row in range(2):
                                                                                     column=column,
                                                                                     padx=2,
                                                                                     pady=2
-                                                                               )
+                                                                                 )
 
 for row in range(2, 6):
     for column in range(3):
@@ -150,7 +158,7 @@ for row in range(2, 6):
                                                                           column=column,
                                                                           padx=2,
                                                                           pady=2
-                                                                     )
+                                                                       )
 
 for row in range(2, 6):
     Button(
@@ -165,7 +173,7 @@ for row in range(2, 6):
                                                                    column=3,
                                                                    padx=2,
                                                                    pady=2
-                                                              )
+                                                                 )
 
 
 root.mainloop()
