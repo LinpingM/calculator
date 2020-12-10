@@ -2,12 +2,12 @@ from tkinter import *
 
 
 ACTIVEBG = '#c5c5c5'
-BGROOT = '#e1e1e1'
-BGNUM = '#fafafa'
-BGOPER = '#f0f0f0'
+BGROOT = '#c9c9c9'
+BGNUM = '#f7f7f7'
+BGOPER = '#e1e1e1'
 FONT = 'Verdana 17'
 BUTTONS = (
-           ('%', '√', 'x²', '¹/x'),
+           ('%', '√x', 'x²', '¹/x'),
            ('сᴇ', 'с', '⌫', '±'),
            ('7', '8', '9', '×'),
            ('4', '5', '6', '-'),
@@ -51,18 +51,23 @@ def calc(lastOper, labelValue):
             ans /= labelValue
         except ZeroDivisionError:
             ans = 0
+    if str(ans).endswith('.0'):
+        ans = int(ans)
 
 def instantOperations(text):
     labelValue = label.cget('text')
     if text == '⌫':
-        labelValue = labelValue[:-1]
+        if labelValue == '':
+            default()
+        else:
+            labelValue = labelValue[:-1]
     else:
         if is_digit(labelValue):
             labelValue = float(labelValue)
             try:
                 if text == '%':
                     labelValue = labelValue / 100
-                elif text == '√':
+                elif text == '√x':
                     if labelValue >= 0:
                         labelValue = labelValue ** 0.5
                 elif text == 'x²':
@@ -76,6 +81,8 @@ def instantOperations(text):
                     labelValue = -labelValue
             except OverflowError:
                 labelValue = 'inf'
+            if str(labelValue).endswith('.0'):
+                labelValue = int(labelValue)
     label['text'] = str(labelValue)
 
 def numbers(text):
@@ -106,6 +113,7 @@ def operations(text):
 
 
 root = Tk()
+root.iconbitmap('calc.ico')
 root.title('Калькулятор')
 root.resizable(False, False)
 root['bg'] = BGROOT
