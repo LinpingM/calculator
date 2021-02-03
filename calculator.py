@@ -1,5 +1,5 @@
 from tkinter import *
-
+from math import radians, sin, cos, tan
 
 ACTIVEBG = '#c5c5c5'
 BGROOT = '#c9c9c9'
@@ -7,6 +7,7 @@ BGNUM = '#f7f7f7'
 BGOPER = '#e1e1e1'
 FONT = 'Verdana 17'
 BUTTONS = (
+           ('sinx', 'cosx', 'tgx', 'ctgx'),
            ('%', '√x', 'x²', '¹/x'),
            ('сᴇ', 'с', '⌫', '±'),
            ('7', '8', '9', '×'),
@@ -81,6 +82,14 @@ def instantOperations(text):
                     labelValue = -labelValue
             except OverflowError:
                 labelValue = 'inf'
+            if text == 'sinx':
+                labelValue = sin(radians(labelValue))
+            elif text == 'cosx':
+                labelValue = cos(radians(labelValue))
+            elif text == 'tgx':
+                labelValue = tan(radians(labelValue))
+            elif text == 'ctgx':
+                labelValue = 1 / tan(radians(labelValue))
             if str(labelValue).endswith('.0'):
                 labelValue = int(labelValue)
     label['text'] = str(labelValue)
@@ -136,7 +145,7 @@ root.geometry(f'+{root.x}+{root.y}')
 label = Label(text='0', font='Verdana 25', bg=BGROOT, height=3)
 label.grid(row=0, column=0, columnspan=4, sticky=E, padx=8)
 
-for row in range(2):
+for row in range(3):
     for column in range(4):
         Button(
             text=BUTTONS[row][column],
@@ -149,10 +158,11 @@ for row in range(2):
                                                                                     row=row + 1,
                                                                                     column=column,
                                                                                     padx=2,
-                                                                                    pady=2
+                                                                                    pady=2,
+                                                                                    sticky=EW
                                                                                  )
 
-for row in range(2, 6):
+for row in range(3, 7):
     for column in range(3):
         Button(
             text=BUTTONS[row][column],
@@ -165,10 +175,12 @@ for row in range(2, 6):
                                                                           row=row + 1,
                                                                           column=column,
                                                                           padx=2,
-                                                                          pady=2
+                                                                          pady=2,
+                                                                          sticky=EW
+
                                                                        )
 
-for row in range(2, 6):
+for row in range(3, 7):
     Button(
         text=BUTTONS[row][3],
         font=FONT,
@@ -180,7 +192,9 @@ for row in range(2, 6):
                                                                    row=row + 1,
                                                                    column=3,
                                                                    padx=2,
-                                                                   pady=2
+                                                                   pady=2,
+                                                                   sticky=EW
+
                                                                  )
 
 
