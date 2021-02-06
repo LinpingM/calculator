@@ -88,8 +88,8 @@ def instantOperations(text):
                 labelValue = cos(radians(labelValue))
             elif text == 'tgx':
                 labelValue = tan(radians(labelValue))
-            elif text == 'ctgx':
-                labelValue = 1 / tan(radians(labelValue))
+            elif text == 'ctgx' and (ctg := tan(radians(labelValue))) != 0:
+                labelValue = 1 / ctg
             if str(labelValue).endswith('.0'):
                 labelValue = int(labelValue)
     label['text'] = str(labelValue)
@@ -124,12 +124,12 @@ def operations(text):
 root = Tk()
 root.iconbitmap('calc.ico')
 root.title('Калькулятор')
-root.resizable(False, False)
+root.resizable(True, True)
 root['bg'] = BGROOT
 
 # root resolution
 root.width = 340
-root.height = 426
+root.height = 469
 
 # screen resolution
 screenW = root.winfo_screenwidth()
@@ -140,7 +140,7 @@ root.x = int(screenW/2 - root.width/2)
 root.y = int(screenH/2 - root.height/2)
 
 root.geometry(f'+{root.x}+{root.y}')
-
+root.minsize(root.width, root.height)
 
 label = Label(text='0', font='Verdana 25', bg=BGROOT, height=3)
 label.grid(row=0, column=0, columnspan=4, sticky=E, padx=8)
@@ -148,54 +148,60 @@ label.grid(row=0, column=0, columnspan=4, sticky=E, padx=8)
 for row in range(3):
     for column in range(4):
         Button(
-            text=BUTTONS[row][column],
-            font=FONT,
-            bd=0,
-            bg=BGOPER,
-            width=5,
-            activebackground=ACTIVEBG,
-            command=lambda text = BUTTONS[row][column]: instantOperations(text)).grid(
-                                                                                    row=row + 1,
-                                                                                    column=column,
-                                                                                    padx=2,
-                                                                                    pady=2,
-                                                                                    sticky=EW
-                                                                                 )
+               text=BUTTONS[row][column],
+               font=FONT,
+               bd=0,
+               bg=BGOPER,
+               width=5,
+               activebackground=ACTIVEBG,
+               command=lambda text = BUTTONS[row][column]: instantOperations(text)
+        ).grid(
+               row=row + 1,
+               column=column,
+               padx=2,
+               pady=2,
+               sticky=NSEW
+          )
 
 for row in range(3, 7):
     for column in range(3):
         Button(
-            text=BUTTONS[row][column],
-            font=FONT,
-            bd=0,
-            bg=BGNUM,
-            width=5,
-            activebackground=ACTIVEBG,
-            command=lambda text = BUTTONS[row][column]: numbers(text)).grid(
-                                                                          row=row + 1,
-                                                                          column=column,
-                                                                          padx=2,
-                                                                          pady=2,
-                                                                          sticky=EW
-
-                                                                       )
+               text=BUTTONS[row][column],
+               font=FONT,
+               bd=0,
+               bg=BGNUM,
+               width=5,
+               activebackground=ACTIVEBG,
+               command=lambda text = BUTTONS[row][column]: numbers(text)
+        ).grid(
+               row=row + 1,
+               column=column,
+               padx=2,
+               pady=2,
+               sticky=NSEW
+          )
 
 for row in range(3, 7):
     Button(
-        text=BUTTONS[row][3],
-        font=FONT,
-        bd=0,
-        bg=BGOPER,
-        width=5,
-        activebackground=ACTIVEBG,
-        command=lambda text = BUTTONS[row][3]: operations(text)).grid(
-                                                                   row=row + 1,
-                                                                   column=3,
-                                                                   padx=2,
-                                                                   pady=2,
-                                                                   sticky=EW
+           text=BUTTONS[row][3],
+           font=FONT,
+           bd=0,
+           bg=BGOPER,
+           width=5,
+           activebackground=ACTIVEBG,
+           command=lambda text = BUTTONS[row][3]: operations(text)
+    ).grid(
+           row=row + 1,
+           column=3,
+           padx=2,
+           pady=2,
+           sticky=NSEW
+      )
 
-                                                                 )
+for i in range(4):
+    root.grid_columnconfigure(i, weight=1)
 
+for i in range(8):
+    root.grid_rowconfigure(i, weight=1)
 
 root.mainloop()
